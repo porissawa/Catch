@@ -4,24 +4,36 @@ const c = canvas.getContext('2d')
 canvas.width = 500
 canvas.height = 800
 
-const move = {
-    left: undefined,
-    right: undefined
-}
 
-const moveSpeed = 5
+let leftPressed = false
+let rightPressed = false
+let moveSpeed = 5
+
 
 //Event listeners
 //move
-window.addEventListener('keydown', function(e) {
-    move.left = e.keyCode
-    move.right = e.keyCode
-})
+document.addEventListener("keydown", keyDownHandler, false);
+
+function keyDownHandler(e) {
+    if(e.key == "Right" || e.key == "ArrowRight") {
+        rightPressed = true;
+    }
+    else if(e.key == "Left" || e.key == "ArrowLeft") {
+        leftPressed = true;
+    }
+}
 
 //stop
-window.addEventListener('keyup', function(e) {
-    move.stop = e.keyCode
-})
+document.addEventListener("keyup", keyUpHandler, false);
+
+function keyUpHandler(e) {
+    if(e.key == "Right" || e.key == "ArrowRight") {
+        rightPressed = false;
+    }
+    else if(e.key == "Left" || e.key == "ArrowLeft") {
+        leftPressed = false;
+    }
+}
 
 const colors = ['#2185C5', '#7ECEFD', '#FF7F66']
 
@@ -62,11 +74,13 @@ function Player(x, y, pWidth, pHeight, color) {
     }
 
     this.update = function() {
-        if (move.left == 37) {
+        //move player
+
+        if (leftPressed && this.x > 0) {
             this.x -= moveSpeed
-        } else if (move.right == 39) {
+        } else if (rightPressed && this.x < canvas.width - pWidth) {
             this.x += moveSpeed
-        } 
+        }
 
         this.draw()
     }
@@ -93,7 +107,11 @@ function init() {
     }
 
     //Initialize player
-    player = new Player((canvas.width/2) - (pWidth/2), canvas.height - pHeight, pWidth, pHeight, color)
+    player = new Player((canvas.width/2) - (pWidth/2), 
+                        canvas.height - pHeight, 
+                        pWidth, 
+                        pHeight, 
+                        color)
 }
 
 // Animate
