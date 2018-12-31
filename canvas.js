@@ -6,13 +6,12 @@ canvas.height = 800
 
 //Variables
 
-//kb events
+//keyboard events
 let leftPressed = false
 let rightPressed = false
 //ball
 let moveSpeed = 5
 let balls = []
-const colors = ['#2185C5', '#7ECEFD', '#FF7F66']
 //player
 let player
 let pWidth = 60
@@ -22,19 +21,7 @@ let color = 'black'
 let score
 let x = canvas.width/1.5
 let y = 30
-let points = 0
-
-
-
-//Functions
-function collision(balls) {
-    if (block.y + block.height < basket.y) { 
-        return; 
-    } else if (block.x >= basket.x && block.x + block.width <= basket.x + basket.width) { 
-    } else { 
-    
-    } 
-}
+let points
 
 //Event listeners
 
@@ -116,7 +103,7 @@ function Player(x, y, pWidth, pHeight, color) {
 function Score(x, y, points) {
     this.x = x
     this.y = y
-    this.points = points
+    this.points = 0
 
     this.draw = function() {
         c.font = '30px Helvetica'
@@ -133,7 +120,7 @@ function Score(x, y, points) {
 // Initialize
 function init() {
     //Initialize balls
-    for (i = 0; i < 40; i++) {
+    for (i = 0; i < 10; i++) {
         let x = Math.random() * canvas.width
         let y = Math.random() * canvas.height
         let dy = 3
@@ -151,28 +138,49 @@ function init() {
                         color)
 
     //Initialize score
+    points = 0
     score = new Score(x, y, 'Score: ' + points)
 }
 
 // Animate
 function animate() {
-    requestAnimationFrame(animate)
-    c.clearRect(0, 0, canvas.width, canvas.height)
-
-    for (i = 0; i < balls.length; i++) {
-        balls[i].update()
-    }
-
-    player.update()
-
-    if (collision(balls, player) == true) {
-        points++
-    }
-
-    score.update() 
-
+    requestAnimationFrame(animate);
+    c.clearRect(0, 0, canvas.width, canvas.height);
     
-}
+    player.update();
+    
+    for (i = 0; i < balls.length; i++) {
+      balls[i].update();
+      if (detectHit(balls[i], player)) {
+        i--
+        score.points += 1
+        console.log(score.points)
+      }
+    }
+    score.update(); 
+     
+  }
+  
+  function detectHit(ball, player) {
+    const ballRadius = ball.radius;
+    const ballCenter = {x: ball.x, y: ball.y};
+    
+    const playerRadius = Math.min(player.pWidth, player.pHeight);
+    const playerCenter = {
+      x: player.x + player.pWidth / 2,
+      y: player.y + player.pHeight / 2
+    };
+    
+    // distance = sqr((x1 - x2)^2 + (y1 - y2)^2)
+    const distanceSqrd = (ballCenter.x - playerCenter.x) ** 2 + (ballCenter.y - playerCenter.y) ** 2;
+    const radiusDistanceSqrd = (ballRadius + playerRadius) ** 2;
+    
+    /*
+      Instead of getting the square root, save a complex 
+      calculation by comparing the squared distances directly
+    */
+    return distanceSqrd <= radiusDistanceSqrd;
+  }
 
 init()
 animate()
