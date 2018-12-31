@@ -4,13 +4,40 @@ const c = canvas.getContext('2d')
 canvas.width = 500
 canvas.height = 800
 
+//Variables
 
+//kb events
 let leftPressed = false
 let rightPressed = false
+//ball
 let moveSpeed = 5
+let balls = []
+const colors = ['#2185C5', '#7ECEFD', '#FF7F66']
+//player
+let player
+let pWidth = 60
+let pHeight = 20
+let color = 'black'
+//score
+let score
+let x = canvas.width/1.5
+let y = 30
+let points = 0
 
+
+
+//Functions
+function collision(balls) {
+    if (block.y + block.height < basket.y) { 
+        return; 
+    } else if (block.x >= basket.x && block.x + block.width <= basket.x + basket.width) { 
+    } else { 
+    
+    } 
+}
 
 //Event listeners
+
 //move
 document.addEventListener("keydown", keyDownHandler, false);
 
@@ -35,11 +62,11 @@ function keyUpHandler(e) {
     }
 }
 
-const colors = ['#2185C5', '#7ECEFD', '#FF7F66']
-
-function Ball(x, y, radius, color) {
+//Objects
+function Ball(x, y, dy, radius, color) {
     this.x = x
     this.y = y
+    this.dy = dy
     this.radius = radius
     this.color = color
     
@@ -54,11 +81,11 @@ function Ball(x, y, radius, color) {
     }
     
     this.update = function() {
+        this.y += dy
         this.draw()
     }
 
 }
-
 
 function Player(x, y, pWidth, pHeight, color) {
     this.x = x
@@ -86,24 +113,34 @@ function Player(x, y, pWidth, pHeight, color) {
     }
 }
 
+function Score(x, y, points) {
+    this.x = x
+    this.y = y
+    this.points = points
+
+    this.draw = function() {
+        c.font = '30px Helvetica'
+        c.fillStyle = '#000'
+        c.fillText(points, this.x, this.y)
+    }
+
+    this.update = function() {
+        this.draw()
+    }
+}
+
+
 // Initialize
-let balls = []
-let player
-
 function init() {
-    balls = []
-    let pWidth = 60
-    let pHeight = 20
-    let color = 'black'
-
     //Initialize balls
     for (i = 0; i < 40; i++) {
         let x = Math.random() * canvas.width
         let y = Math.random() * canvas.height
+        let dy = 3
         let radius = 15
         let color = 'purple'
 
-        balls.push(new Ball(x, y, radius, color))
+        balls.push(new Ball(x, y, dy, radius, color))
     }
 
     //Initialize player
@@ -112,6 +149,9 @@ function init() {
                         pWidth, 
                         pHeight, 
                         color)
+
+    //Initialize score
+    score = new Score(x, y, 'Score: ' + points)
 }
 
 // Animate
@@ -124,6 +164,14 @@ function animate() {
     }
 
     player.update()
+
+    if (collision(balls, player) == true) {
+        points++
+    }
+
+    score.update() 
+
+    
 }
 
 init()
