@@ -152,13 +152,15 @@ function animate() {
     for (i = 0; i < balls.length; i++) {
       balls[i].update();
       if (detectHit(balls[i], player)) {
-        i--
+        balls.splice([i], 1)
         score.points += 1
         console.log(score.points)
+        
       }
     }
+    
     score.update(); 
-     
+    
   }
   
   function detectHit(ball, player) {
