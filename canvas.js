@@ -21,7 +21,7 @@ let color = 'black'
 let score
 let x = canvas.width/1.5
 let y = 30
-let points
+let points = 0
 
 //Event listeners
 
@@ -122,7 +122,7 @@ function init() {
     //Initialize balls
     for (i = 0; i < 10; i++) {
         let x = Math.random() * canvas.width
-        let y = Math.random() * canvas.height
+        let y = Math.random() * canvas.height - canvas.height
         let dy = 3
         let radius = 15
         let color = 'purple'
@@ -146,21 +146,19 @@ function init() {
 function animate() {
     requestAnimationFrame(animate);
     c.clearRect(0, 0, canvas.width, canvas.height);
-    
-    player.update();
-    
+
     for (i = 0; i < balls.length; i++) {
       balls[i].update();
       if (detectHit(balls[i], player)) {
         balls.splice([i], 1)
-        score.points += 1
-        console.log(score.points)
-        
+        points++
+        score = new Score(x, y, 'Score: ' + points)
       }
     }
     
+    player.update();
     score.update(); 
-    
+
   }
   
   function detectHit(ball, player) {
